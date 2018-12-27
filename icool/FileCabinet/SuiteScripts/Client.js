@@ -23,7 +23,7 @@ function fieldChanged(type, name, linenum) {
 				[new nlobjSearchFilter('internalid', null, 'is', line)], 
 				[new nlobjSearchColumn('custitem_field_item_long'),
 				new nlobjSearchColumn('custitem_field_item_wide'),
-				new nlobjSearchColumn('custitem_field_item_high') ]);
+				new nlobjSearchColumn('custitem_field_item_high')]);
 		if (search != null) {
 			var long = search[0].getValue('custitem_field_item_long');
 			var width = search[0].getValue('custitem_field_item_wide');

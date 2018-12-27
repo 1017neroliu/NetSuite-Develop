@@ -8,6 +8,7 @@
 
 function setClass(type, name, linenum){
 	if(name == 'item'){
+		nlapiLogExecution('debug', 'soClass', '1');
 		var soClass = nlapiGetFieldValue('class');
 		nlapiLogExecution('debug', 'soClass', soClass);
 		nlapiSetCurrentLineItemValue('item', 'class', soClass);

@@ -26,7 +26,7 @@ function afterSubmit(type) {
 				for (var j = 1; j <= linenum; j++) {
 					var itemId = nlapiGetLineItemValue('item', 'custcol_line_in_col_item', j);
 					var quantity = nlapiGetLineItemValue('item', 'custcol_line_in_col_quantity', j);
-				//这个判断条件怎们写
+				//这个判断条件怎么写
 					if(itemId == itemId){
 					sum += quantity;
 					}

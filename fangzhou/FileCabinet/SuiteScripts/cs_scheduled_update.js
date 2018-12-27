@@ -21,9 +21,10 @@ function scheduleUpdate() {
 	var searchResults = search.runSearch();
 	var resultIndex = 0;
 	var resultStep = 1000;
+	var result;
 	//超过1000条的更新
 	do {
-		var result = searchResults.getResults(resultIndex, resultStep);
+		result = searchResults.getResults(resultIndex, resultStep);
 		resultIndex = resultIndex + resultStep;
 		var searchLength = result.length;
 		if (result != null && searchLength > 0) {
@@ -47,9 +48,8 @@ function scheduleUpdate() {
 					nlapiSubmitRecord(record);
 				}
 				// 提交记录
-				
 			}
 		}
 		//当条件为假时，不再执行do，跳出循环
-	} while (result != null && result.length > 0)
+	} while (result != null && result.length > 0);
 }

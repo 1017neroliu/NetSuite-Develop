@@ -5,7 +5,7 @@
  * 	1.00 	11 Sep 2018 	Nero
  * 
  */
-// 应用到Deposit Application上
+// 应用到Deposit Application上，当apply的时候，保存Deposit Application的时候触发的脚本，设置非前TT预付款余额的值
 function beforeSubmit(type) {
 	try {
 		var deposit = nlapiGetFieldValue('deposit');

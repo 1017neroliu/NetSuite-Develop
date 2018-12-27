@@ -7,7 +7,7 @@
  */
 
 function afterSubmit(type){
-	//
+	//应用到item fulfillment上，点击保存触发脚本，设置amount shipped currency的值
   var soId = nlapiGetFieldValue('createdfrom');
   var search = nlapiSearchRecord('salesorder', null, 
 			new nlobjSearchFilter('internalid', null, 'is',soId));
@@ -27,8 +27,8 @@ function afterSubmit(type){
 }
 //  var rate = parseFloat(soRec.getFieldValue('exchangerate'));
 //  var as = Tsasc*rate;
-//  soRec.setFieldValue('custbody_so_amount_shipped_currency', Tsasc);
-  soRec.setFieldValue('custbody_so_amount_shipped', Tsasc);
+  soRec.setFieldValue('custbody_so_amount_shipped_currency', Tsasc);
+//  soRec.setFieldValue('custbody_so_amount_shipped', Tsasc);
   nlapiSubmitRecord(soRec);
   }
 }

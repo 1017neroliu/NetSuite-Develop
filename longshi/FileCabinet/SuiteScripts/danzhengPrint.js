@@ -35,14 +35,22 @@
     <br /><br />&nbsp;
 <table align="center" border="0" cellpadding="0" cellspacing="2"><tr>
 	<td style="text-align: center;">
-	<h1><strong><span style="font-family:arial,helvetica,sans-serif;"><span style="font-size:24px;"><span style="text-align: center;">${record.createdfrom.subsidiary}</span></span></span></strong></h1>
+	<h1><strong><span style="font-family:arial,helvetica,sans-serif;"><span style="font-size:24px;"><span style="text-align: center;">${record.subsidiary}</span></span></span></strong></h1>
 	</td>
 	</tr></table>
-
+	
+	<table border="0" cellpadding="0" cellspacing="2"><tr>
+	<td height="10px"></td>
+	</tr></table>
+	
 <table align="center" border="0" cellpadding="0" cellspacing="2"><tr>
 	<td style="text-align: center;">
-	<h1><span style="font-family:arial,helvetica,sans-serif;"><span style="font-size:22px;"><span style="text-align: center;">${companyInformation.companyname?upper_case}</span></span></span></h1>
+	<h1><span style="font-family:arial,helvetica,sans-serif;"><span style="font-size:18px;"><span style="text-align: center;">#print2HTML#</span></span></span></h1>
 	</td>
+	</tr></table>
+	
+	<table border="0" cellpadding="0" cellspacing="2"><tr>
+	<td height="10px"></td>
 	</tr></table>
 
 <table align="center" border="0" cellpadding="0" cellspacing="2"><tr>
@@ -58,42 +66,22 @@
 &nbsp;
 
 <div>&nbsp;
-<table align="center" border="0" cellpadding="0" cellspacing="2" style="width:700px;"><tr>
-	<td><span style="font-size:12px;"><strong>TO:</strong></span></td>
-	<td rowspan="4"><span style="font-size:12px;">${record.createdfrom.billaddress}</span></td>
-	<td><span style="font-size:12px;"><strong>INVOICE NO.:</strong></span></td>
-	<td><span style="font-size:12px;">${record.createdfrom.tranid}</span></td>
-	</tr>
-	<tr>
-	<td>&nbsp;</td>
-	<td><span style="font-size:12px;"><strong>DATE:</strong></span></td>
-	<td><span style="font-size:12px;">${record.createdfrom.trandate}</span></td>
-	</tr>
-	<tr>
-	<td>&nbsp;</td>
-	<td><span style="font-size:12px;"><strong>S/O:</strong></span></td>
-	<td><span style="font-size:12px;">&nbsp;</span></td>
-	</tr>
-	<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	</tr></table>
+#print3HTML#
 
 <table align="center" border="0" cellpadding="0" cellspacing="0" style="width:700px;"><tr>
 	<td style="height:20px">&nbsp;</td>
 	</tr></table>
 
-<table align="center" border="1" cellpadding="0" cellspacing="0" style="width:700px;"><tr style="margin-top:10px; margin-left:20px;">
-	<td><span style="font-size:12px;">C/N</span></td>
-	<td><span style="font-size:12px;">DESCRIPTION</span></td>
-	<td><span style="font-size:12px;">QTY.</span></td>
-	<td><span style="font-size:12px;">GW</span></td>
-	<td><span style="font-size:12px;">NW</span></td>
-	<td><span style="font-size:12px;">MEAS.</span></td>
+<table align="center" border="1" cellpadding="3" cellspacing="0" style="width:700px;"><tr style="margin-top:10px; margin-left:20px;">
+	<td colspan="2"><span style="font-size:12px;"><strong>C/N</strong></span></td>
+	<td colspan="2"><span style="font-size:12px;"><strong>DESCRIPTION</strong></span></td>
+	<td colspan="2"><span style="font-size:12px;"><strong>QTY.</strong></span></td>
+	<td colspan="2"><span style="font-size:12px;"><strong>G.W.</strong></span></td>
+	<td colspan="2"><span style="font-size:12px;"><strong>N.W.</strong></span></td>
+	<td colspan="2"><span style="font-size:12px;"><strong>MEAS.</strong></span></td>
 	</tr>
 	<tr style="margin-left:20px;">
-	<td colspan="6" style="height:10px">&nbsp;</td>
+	<td colspan="12" style="height:10px">&nbsp;</td>
 	</tr>#printHTML#
 	</table>
 
