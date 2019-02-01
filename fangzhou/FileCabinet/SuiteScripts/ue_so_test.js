@@ -3,12 +3,15 @@
  * 
  * Version    Date            Author           Remarks
  * 1.00       13 Dec 2018     Nero
- *
+ *	Asia/Hong_Kong
+ *	时区转换可以用NS系统中封装好的API--nlapiGetDateTimeValue(fieldId, timeZone)
  */
 //ue无法通过明细行关闭订单，也无法直接指定orderstatus == ‘H’来关闭订单，舍弃！
 function beforeLoad(type, form, request){
 	var createDate = nlapiGetFieldValue('trandate');
 	nlapiLogExecution('debug', '最初', nlapiGetFieldValue('trandate'));
+	
+	nlapiGetDateTimeValue(fieldId, 'Asia/Hong_Kong');
 	
 	var now = new Date();//当前日期
 	var tmp = now.getHours();

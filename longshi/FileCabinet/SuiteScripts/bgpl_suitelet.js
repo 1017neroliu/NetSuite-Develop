@@ -39,7 +39,7 @@ function print(request, response) {
 					if(!vatregnumber){
 						vatregnumber = '';
 					}
-					nlapiLogExecution('error', 'companyname', companyname)
+//					nlapiLogExecution('error', 'companyname', companyname);
 				}
 			}
 		}
@@ -52,10 +52,12 @@ function print(request, response) {
 //			nlapiLogExecution('debug', 'test', '123');
 			var temp = '';
 			
-			var TTLQTY = 0;
+//			var TTLQTY = 0;
 			var TTLGW = 0;
 			var TTLNW = 0;
 			var TTLMEAS = 0;
+//			var TTLCN = 0;
+			
 			// 获取表单的信息
 			for (var i = 0; i < search.length; i++) {
 				
@@ -77,7 +79,7 @@ function print(request, response) {
 				}
 				//
 				var str = search[i].getValue(cols[7]);
-				var start = str.indexOf('.');
+				var start = str.indexOf('.');//索引从0开始，
 				if(start == 0){
 					str = '0' + str;
 				}else if(start == -1) {
@@ -91,21 +93,23 @@ function print(request, response) {
 				var currency = search[i].getValue(cols[10]);
 				//单位
 				var units = search[i].getValue(cols[4]);
+				var custcol_unit = search[i].getText(cols[11]);
 				//卷数
 				var CN = search[i].getValue(cols[6]);
 				//报关名
 				var DESCRIPTION = search[i].getValue(cols[0]);
 //				nlapiLogExecution('error', 'DESCRIPTION', DESCRIPTION);
 					// 求和
-					TTLQTY += parseFloat(QTY);
+//					TTLQTY += parseFloat(QTY);
 					TTLGW += parseFloat(GW);
 					TTLNW += parseFloat(NW);
 					TTLMEAS += parseFloat(MEAS);
-					
+//					TTLCN += parseFloat(CN);
 				//拼接模板
 			 temp += '<tr style="margin-left:20px;">'+
+			 	'<td></td>'+
 				'<td style="align: right;"><span style="font-size:12px;">'+CN+'&nbsp;&nbsp;</span></td>'+
-				'<td style="align: left;"><span style="font-size:12px;">Rolls</span></td>'+
+				'<td style="align: left;"><span style="font-size:12px;">'+custcol_unit+'</span></td>'+
 				'<td colspan="2" style="align: center;"><span style="font-size:12px;">'+DESCRIPTION+'</span></td>'+
 				'<td style="align: right;"><span style="font-size:12px;">'+QTY.toFixed(1)+'&nbsp;&nbsp;</span></td>'+
 				'<td style="align: left;"><span style="font-size:12px;">'+units+'</span></td>'+
@@ -131,7 +135,7 @@ function print(request, response) {
 			'<td colspan="1" rowspan="4" style="align: left; width: 200px;"><span style="font-size:12px;">${record.shipaddress}</span></td>'+
 			'<td>&nbsp;</td>'+
 			'<td style="align: left; width: 100px"><span style="font-size:12px;"><strong>DATE:</strong></span></td>'+
-			'<td style="align: left; width: 100px"><span style="font-size:12px;">${record.createdfrom.trandate}</span></td>'+
+			'<td style="align: left; width: 100px"><span style="font-size:12px;">${record.trandate}</span></td>'+
 			'<td>&nbsp;</td>'+
 			'</tr>'+
 			'<tr>'+
@@ -176,26 +180,66 @@ function print(request, response) {
 			'<td>&nbsp;</td>'+
 			'<td>&nbsp;</td>'+
 			'</tr></table>';
+			//分单位汇总--QTY数量，C/N
+			var ut = '';
+			var ut1 = '';
+			
+			var qsearch = nlapiSearchRecord(null, 'customsearch_unit_total', [
+          				new nlobjSearchFilter('entity', null, 'is', customer),
+          				new nlobjSearchFilter('custbody6', null, 'is', shipping) ]);
+			var csearch = nlapiSearchRecord(null, 'customsearch_rolls', [
+         				new nlobjSearchFilter('entity', null, 'is', customer),
+         				new nlobjSearchFilter('custbody6', null, 'is', shipping) ]);
+			nlapiLogExecution('error', 'qsearch.length', qsearch.length);
+			var longer = (qsearch.length >= csearch.length) ? qsearch.length : csearch.length;//取长度长的遍历
+			if (qsearch != null && csearch != null) {
+      			for (var B = 0; B < csearch.length; B++) {
+      				var ccols = csearch[B].getAllColumns();
+      			}
+      			for (var C = 0; C < qsearch.length; C++) {
+      				var qcols = qsearch[C].getAllColumns();
+				}
+      			nlapiLogExecution('error', '测试', '到了？');
+      			var str = '<tr style="margin-left:20px;">'+
+				'<td style="align: left;"><span style="font-size:12px;"><strong>TTL:</strong></span></td>'+
+				'<td style="align: right;"><span style="font-size:12px;">'+parseFloat(csearch[0].getValue(ccols[1]))+'&nbsp;&nbsp;</span></td>'+
+				'<td style="align: left;"><span style="font-size:12px;">'+csearch[0].getText(ccols[0])+'</span></td>'+
+				'<td colspan="2"></td>'+
+				'<td style="align: right;"><span style="font-size:12px;">'+parseFloat(qsearch[0].getValue(qcols[3])).toFixed(1)+'&nbsp;&nbsp;</span></td>'+
+				'<td style="align: left;"><span style="font-size:12px;">'+qsearch[0].getText(qcols[0])+'</span></td>'+
+				'<td style="align: right;"><span style="font-size:12px;">'+TTLGW.toFixed(2)+'&nbsp;&nbsp;</span></td>'+
+				'<td style="align: left;"><span style="font-size:12px;">KGS</span></td>'+
+				'<td style="align: right;"><span style="font-size:12px;">'+TTLNW.toFixed(2)+'&nbsp;&nbsp;</span></td>'+
+				'<td style="align: left;"><span style="font-size:12px;">KGS</span></td>'+
+				'<td style="align: right;"><span style="font-size:12px;">'+TTLMEAS.toFixed(2)+'&nbsp;&nbsp;</span></td>'+
+				'<td style="align: left;"><span style="font-size:12px;">CBM</span></td>'+
+				'</tr>';
+      			for (var A = 1; A < longer; A++) {
+      				ut1 += '<tr style="margin-left:20px;">'+
+    				'<td style="align: left;"><span style="font-size:12px;"></span></td>'+
+    				'<td style="align: right;"><span style="font-size:12px;">'+parseFloat(csearch[A].getValue(ccols[1]))+'&nbsp;&nbsp;</span></td>'+
+    				'<td style="align: left;"><span style="font-size:12px;">'+csearch[A].getText(ccols[0])+'</span></td>'+
+    				'<td colspan="2"></td>'+
+    				'<td style="align: right;"><span style="font-size:12px;">'+parseFloat(qsearch[A].getValue(qcols[3])).toFixed(1)+'&nbsp;&nbsp;</span></td>'+
+    				'<td style="align: left;"><span style="font-size:12px;">'+qsearch[A].getText(qcols[0])+'</span></td>'+
+    				'<td style="align: right;"><span style="font-size:12px;">&nbsp;&nbsp;</span></td>'+
+    				'<td style="align: left;"><span style="font-size:12px;"></span></td>'+
+    				'<td style="align: right;"><span style="font-size:12px;">&nbsp;&nbsp;</span></td>'+
+    				'<td style="align: left;"><span style="font-size:12px;"></span></td>'+
+    				'<td style="align: right;"><span style="font-size:12px;">&nbsp;&nbsp;</span></td>'+
+    				'<td style="align: left;"><span style="font-size:12px;"></span></td>'+
+    				'</tr>';
+      				}
+      			}
+			ut = str + ut1;
 			var total = temp+'<tr style="margin-left:20px;">'+
 			'<td colspan="12" style="align: center; height: 50px">&nbsp;</td>'+
-			'</tr>'+
+			'</tr>'+ut+
 			'<tr style="margin-left:20px;">'+
-			'<td colspan="2" style="align: left;"><span style="font-size:12px;"><strong>TTL:</strong></span></td>'+
-			'<td colspan="2"></td>'+
-			'<td style="align: right;"><span style="font-size:12px;">'+TTLQTY.toFixed(1)+'&nbsp;&nbsp;</span></td>'+
-			'<td style="align: left;"><span style="font-size:12px;">'+units+'</span></td>'+
-			'<td style="align: right;"><span style="font-size:12px;">'+TTLGW.toFixed(2)+'&nbsp;&nbsp;</span></td>'+
-			'<td style="align: left;"><span style="font-size:12px;">KGS</span></td>'+
-			'<td style="align: right;"><span style="font-size:12px;">'+TTLNW.toFixed(2)+'&nbsp;&nbsp;</span></td>'+
-			'<td style="align: left;"><span style="font-size:12px;">KGS</span></td>'+
-			'<td style="align: right;"><span style="font-size:12px;">'+TTLMEAS.toFixed(2)+'&nbsp;&nbsp;</span></td>'+
-			'<td style="align: left;"><span style="font-size:12px;">CBM</span></td>'+
-			'</tr>'+
-			'<tr style="margin-left:20px;">'+
-			'<td colspan="12" style="align: center; height: 50px">&nbsp;</td>'+
+			'<td colspan="13" style="align: center; height: 50px">&nbsp;</td>'+
 			'</tr>'+
 			'<tr style="margin-bottom:10px; margin-left:20px;">'+
-			'<td colspan="12" style="align: left;"><span style="font-size:12px;"><strong>TOTAL GROSS WEIGHT:&nbsp;&nbsp;</strong></span><span style="font-size:12px;">'+TTLGW.toFixed(2)+'&nbsp;&nbsp;KGS</span></td>'+
+			'<td colspan="13" style="align: left;"><span style="font-size:12px;"><strong>TOTAL GROSS WEIGHT:&nbsp;&nbsp;</strong></span><span style="font-size:12px;">'+TTLGW.toFixed(2)+'&nbsp;&nbsp;KGS</span></td>'+
 			'</tr>';
 			var soId = record.getFieldValue('createdfrom');
 			if(soId){
@@ -224,14 +268,14 @@ function print(request, response) {
 	}
 }
 
-//转义特殊字符
-function convert(str){
-	if(str!=null&&str!=''&&str!=undefined&&str!=' '){
-		str=str.replace(/&/g,"&amp;");
-		str=str.replace(/>/g,"&gt;");
-		str=str.replace(/</g,"&lt;");
-		str=str.replace(/"/g,"&quot;");
-		str=str.replace(/'/g,"&#039;")
-		}
+// 转义特殊字符
+function convert(str) {
+	if (str != null && str != '' && str != undefined && str != ' ') {
+		str = str.replace(/&/g, "&amp;");
+		str = str.replace(/>/g, "&gt;");
+		str = str.replace(/</g, "&lt;");
+		str = str.replace(/"/g, "&quot;");
+		str = str.replace(/'/g, "&#039;")
+	}
 	return str;
 }

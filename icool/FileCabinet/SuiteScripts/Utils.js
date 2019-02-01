@@ -191,7 +191,7 @@ function _cutText(text, size) {
 // : Big Changes for ALLLLLLL
 function _log(title, detail) {
     var logType = 'debug';
-    _nlapiLogExecution(logType, title, detail)
+    _nlapiLogExecution(logType, title, detail);
 
 }
 function _audit(title, detail) {

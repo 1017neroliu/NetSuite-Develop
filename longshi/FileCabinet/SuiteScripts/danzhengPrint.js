@@ -54,7 +54,7 @@
 	</tr></table>
 
 <table align="center" border="0" cellpadding="0" cellspacing="2"><tr>
-	<td style="text-align: center;"><span style="font-family:arial,helvetica,sans-serif;"><span style="text-align: center;">${companyInformation.mainaddress_text}</span></span></td>
+	<td style="text-align: center;"><span style="font-family:arial,helvetica,sans-serif;"><span style="text-align: center;">${record.subsidiary.custrecord_address_print}</span></span></td>
 	</tr></table>
 &nbsp;
 
@@ -65,7 +65,7 @@
 	</tr></table>
 &nbsp;
 
-<div>&nbsp;
+
 #print3HTML#
 
 <table align="center" border="0" cellpadding="0" cellspacing="0" style="width:700px;"><tr>
@@ -73,6 +73,7 @@
 	</tr></table>
 
 <table align="center" border="1" cellpadding="3" cellspacing="0" style="width:700px;"><tr style="margin-top:10px; margin-left:20px;">
+	<td></td>
 	<td colspan="2"><span style="font-size:12px;"><strong>C/N</strong></span></td>
 	<td colspan="2"><span style="font-size:12px;"><strong>DESCRIPTION</strong></span></td>
 	<td colspan="2"><span style="font-size:12px;"><strong>QTY.</strong></span></td>
@@ -81,11 +82,11 @@
 	<td colspan="2"><span style="font-size:12px;"><strong>MEAS.</strong></span></td>
 	</tr>
 	<tr style="margin-left:20px;">
-	<td colspan="12" style="height:10px">&nbsp;</td>
+	<td colspan="13" style="height:10px">&nbsp;</td>
 	</tr>#printHTML#
 	</table>
 
 <div style="text-align: center;">&nbsp;</div>
-</div>
+
 </body>
 </pdf>

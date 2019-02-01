@@ -17,7 +17,7 @@
 function scheduleUpdate() {
 	// 加载search
 	var search = nlapiLoadSearch(null, 463);
-	// var len = result.length % 1000 == 0?result.length/1000:result.length/1000+1;
+	// var len = (result.length) % 1000 == 0?(result.length/1000):(result.length/1000+1);
 	//运行search，返回结果
 	var searchResults = search.runSearch();
 	var resultIndex = 0;

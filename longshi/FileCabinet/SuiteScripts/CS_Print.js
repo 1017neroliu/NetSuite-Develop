@@ -1,5 +1,4 @@
-function CS_Print()
-{
+function CS_Print(){
 
 	var PrintQCURL = nlapiResolveURL('SUITELET','customscript26','customdeploy1',false);
 	
@@ -19,8 +18,7 @@ function QCI_Print() {
 	newWindow = window.open(PrintQCURL, "_blank");
 }
 
-function BPL_Print()
-{
+function BPL_Print(){
 
 	var PrintQCURL = nlapiResolveURL('SUITELET','customscript28','customdeploy1',false);
 	
@@ -29,8 +27,7 @@ function BPL_Print()
 	newWindow = window.open(PrintQCURL, "_blank");
 }
 
-function BCI_Print()
-{
+function BCI_Print(){
 
 	var PrintQCURL = nlapiResolveURL('SUITELET','customscript27','customdeploy1',false);
 	
