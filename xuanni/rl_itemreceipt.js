@@ -19,8 +19,7 @@ function createItemReceipt(dataIn) {
 		try {
 			if (dataIn) {
 				//创建货品收据（item receipt）
-				var receiptRec = nlapiTransformRecord('transferorder',
-						dataIn.transferOrderId, 'itemreceipt');
+				var receiptRec = nlapiTransformRecord('transferorder',dataIn.transferOrderId, 'itemreceipt');
 				receiptRec.setFieldValue('memo', '测试无指令接口');
 
 				var receiptId = nlapiSubmitRecord(receiptRec);
@@ -40,6 +39,14 @@ function createItemReceipt(dataIn) {
 				}
 
 				if (receiptId) {
+					data = {
+						"itemData" : itemobj
+					}
+					Jsondata.push(data);
+					responer = {
+						"status" : "success",
+						"message" : Jsondata
+					}
 					
 					writeLog('新建货品收据单' + receiptId, 
 							'item receipt is created',
@@ -50,47 +57,22 @@ function createItemReceipt(dataIn) {
 							JSON.stringify(data)
 							);
 					
-				} else {
-					
-					writeLog('新建货品收据单', 
-							'item receipt creation failed', 
-							user,
-							scriptId, 
-							'ERROR', 
-							JSON.stringify(dataIn)
-							);
-					
-				}
-				if (receiptId) {
-					data = {
-						"itemData" : itemobj
-					}
-					Jsondata.push(data);
-					responer = {
-						"status" : "success",
-						"message" : Jsondata
-					}
 					return JSON.stringify(responer);
-				} else {
-					
-					writeLog('创建记录失败', 
-							 'record creation failed', 
-							 user,
-							 scriptId, 
-							 'ERROR', 
-							 JSON.stringify(dataIn), 
-							 JSON.stringify(data)
-							 );
-					
-					return {
-						"status" : "failure",
-						"message" : "创建记录失败！"
-					};
 				}
 			}
 		} catch (e) {
-			return{
-				"error" : "请求的数据有误！"
-			}
+			writeLog('创建记录失败', 
+					 'record creation failed', 
+					 user,
+					 scriptId, 
+					 'ERROR', 
+					 JSON.stringify(dataIn)
+					 );
+			
+			return {
+				"status" : "failure",
+				"message" : "创建入库单失败！",
+				"reason" : e.message
+			};
 		}
 }
