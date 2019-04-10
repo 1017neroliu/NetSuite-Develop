@@ -3,7 +3,9 @@
  * 
  * Version 		Date 		Author 		Remarks 
  * 1.00 	16 Jul 2018 	Nero
- * 
+ * 	废弃脚本！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+ * ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+ * ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
  */
 function beforeLoad(type, form, request) {
 	try {
@@ -25,6 +27,8 @@ function beforeLoad(type, form, request) {
 								recId : recId
 							}) + "'" + ",'_blank'),window.focus()");
 			nlapiLogExecution('debug', 'test', '222');
+//https://system.netsuite.com/app/site/hosting/scriptlet.nl?script=24&
+//			deploy=1&compid=4856978_SB1&customerName=2486&shippingNumber=Y-xxx			
 		}
 	} catch (e) {
 		processException(e);
@@ -38,6 +42,7 @@ function print(request, response) {
 		var record = nlapiLoadRecord(recType, recId);
 		//取供方的值
 		var poId = record.getLineItemValue('item', 'createdpo', 1);
+		var unit_total = record.getLineItemValue('item', 'units_display', 1);
 		var pur = nlapiLoadRecord('purchaseorder', poId);
 		var vendorId = pur.getFieldValue('entity');
 		var vendor = nlapiLoadRecord('vendor', vendorId);
@@ -73,52 +78,52 @@ function print(request, response) {
 		
 		//拼接供需方信息
 		var gx = '<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">需方：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xname+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">供方：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+name+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">需方：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+xname+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">供方：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+name+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">法人代表：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xfaren+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">法人代表：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+faren+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">法人代表：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+xfaren+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">法人代表：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+faren+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">经办人员：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xjingban+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">经办人员：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+jingban+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">经办人员：</span></td>'+
+			'<td style="align: left;"colspan="2" rowspan="1"><span style="font-size:12px;">'+xjingban+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">经办人员：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+jingban+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">地址：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xadd+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">地址：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+add+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">地址：</span></td>'+
+			'<td style="align: left;"colspan="2" rowspan="1"><span style="font-size:12px;">'+xadd+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">地址：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+add+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">电话：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xphone+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">电话：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+phone+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">电话：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+xphone+'</span></td>'+
+			'<td style="align: center;"><span style="font-size:12px;">电话：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+phone+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">传真：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xfax+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">传真：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+fax+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">传真：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+xfax+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">传真：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+fax+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">开户银行：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xyinhang+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">开户银行：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+yinhang+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">开户银行：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+xyinhang+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">开户银行：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+yinhang+'</span></td>'+
 			'</tr>'+
 			'<tr style="margin-bottom:10px">'+
-			'<td style="text-align: center;"><span style="font-size:12px;">账号：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xzhanghao+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">账号：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+zhanghao+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">账号：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+xzhanghao+'</span></td>'+
+			'<td style="align: left;"><span style="font-size:12px;">账号：</span></td>'+
+			'<td style="align: left;" colspan="2" rowspan="1"><span style="font-size:12px;">'+zhanghao+'</span></td>'+
 			'</tr>';
 		
 		nlapiLogExecution("debug", "result", "OK");
@@ -126,7 +131,8 @@ function print(request, response) {
 		var htmlFile = nlapiLoadFile(1122);
 		var html = htmlFile.getValue();
 		// 用打印模板替换xml
-		 html1 = html.replace("#print1HTML#", name);
+		 html0 = html.replace("#print0HTML#",unit_total);
+		 html1 = html0.replace("#print1HTML#", name);
 		 html2 = html1.replace("#print2HTML#",gx);
 		// 生成打印表单，renderer对象将模板作为字符串传递给FreeMarker方法
 		var renderer = nlapiCreateTemplateRenderer();

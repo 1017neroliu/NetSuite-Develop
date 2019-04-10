@@ -72,23 +72,42 @@ function print(request, response) {
 						'<td style="align: center;"><span style="font-size:12px;">'+amount.toFixed(2)+'&nbsp;&nbsp;${record.currency}</span></td>'+
 						'</tr>';
 				}
-				
-				var total = temp+'<tr>'+
-				'<td colspan="6" style="align: center; height: 200px; vertical-align: middle;">'+
-				'<div style="margin-left:100px; margin-right:100px;"><span style="align: right; font-size:12px;">${record.custbody_special_note}</span></div>'+
-				'</td>'+
+			//========================================分单位统计======================================================
+			//单位合计search
+			var ut,ut1,total;
+			var qsearch = nlapiSearchRecord(null, 70, [
+          				new nlobjSearchFilter('entity', null, 'is', customer),
+          				new nlobjSearchFilter('custbody6', null, 'is', shipping) ]);
+			if (qsearch != null) {
+				for (var C = 0; C < qsearch.length; C++) {
+      				var qcols = qsearch[C].getAllColumns();
+				}
+				ut = temp+
+				'<tr style="margin-left:20px;">'+
+				'<td colspan="6" style="align: center; height: 50px">&nbsp;</td>'+
 				'</tr>'+
-				'<tr style="margin-bottom:10px">'+
+				'<tr>'+
 				'<th style="align: left;"><span style="font-size:12px;"><strong>TTL:</strong></span></th>'+
 				'<td colspan="2" rowspan="1">&nbsp;</td>'+
-				'<td style="align: center;"><span style="font-size:12px;">'+TTLQTY.toFixed(1)+'&nbsp;&nbsp;'+units+'</span></td>'+
+				'<td style="align: center;"><span style="font-size:12px;">'+parseFloat(qsearch[0].getValue(qcols[3])).toFixed(1)+'&nbsp;&nbsp;'+qsearch[0].getText(qcols[0])+'</span></td>'+
 				'<td colspan="1" rowspan="1">&nbsp;</td>'+
 				'<td style="align: center;"><span style="font-size:12px;">'+TTLamount.toFixed(2)+'&nbsp;&nbsp;${record.currency}</span></td>'+
 				'</tr>';
+				for (var A = 1; A < qsearch.length; A++) {
+					ut1 += 
+					'<tr>'+
+					'<th style="align: left;"></th>'+
+					'<td colspan="2" rowspan="1">&nbsp;</td>'+
+					'<td style="align: center;"><span style="font-size:12px;">'+parseFloat(qsearch[A].getValue(qcols[3])).toFixed(1)+'&nbsp;&nbsp;'+qsearch[A].getText(qcols[0])+'</span></td>'+
+					'<td colspan="1" rowspan="1">&nbsp;</td>'+
+					'<td style="align: center;"></td>'+
+					'</tr>';
+				}
+			}
 //				var subId = record.getFieldValue('subsidiary');
 //				var subRec = nlapiLoadRecord('subsidiary', subId);
 //				var zigongsi = subRec.getFieldValue('custrecord_subsidiary_en');
-				
+				total = ut + ut1;
 				var htmlFile = nlapiLoadFile(1183);
 				var html = htmlFile.getValue();
 				// 用temp替换模板中的#printHTML#

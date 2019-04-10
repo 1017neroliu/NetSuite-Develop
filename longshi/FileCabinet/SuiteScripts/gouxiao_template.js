@@ -47,116 +47,75 @@
 	</tr></table>
 &nbsp;
 
-<table align="center" border="1" cellpadding="1" cellspacing="1" style="width:700px;"><tr style="margin-top:10px;">
-	<td style="text-align:center"><span style="font-size:12px;">需方：</span></td>
-	<td colspan="3" rowspan="1"><span style="font-size:12px;">${record.subsidiary}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">合同编号：</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">${record.custbody4}</span></td>
+<table align="left" border="1" cellpadding="6px" cellspacing="1" style="width:100%;"><tr>
+	<td style="align: left" colspan="2"><span style="font-size:12px;">需方：</span></td>
+	<td style="align: left" colspan="8" rowspan="1"><span style="font-size:12px;">${record.subsidiary}</span></td>
+	<td style="align: right" colspan="1"><span style="font-size:12px;">合同编号：</span></td>
+	<td style="align: left" colspan="1"><span style="font-size:12px;">${record.custbody6}</span></td>
+	</tr>
+	<tr style="border-bottom:solid">
+	<td style="align: left;" colspan="2"><span style="font-size:12px;">供方：</span></td>
+	<td colspan="8" rowspan="1"><span style="font-size:12px;">#print1HTML#</span></td>
+	<td style="align: right;" colspan="1"><span style="font-size:12px;">签约日期：</span></td>
+	<td style="align: left;" colspan="1"><span style="font-size:12px;">${record.trandate}</span></td>
 	</tr>
 	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">供方：</span></td>
-	<td colspan="3" rowspan="1"><span style="font-size:12px;">#print1HTML#</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">签约日期：</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">${record.trandate}</span></td>
+	<td colspan="2" style="align: left;"><span style="font-size:12px;">产品名称</span></td>
+	<td colspan="2" style="align: left;"><span style="font-size:12px;">计量单位</span></td>
+	<td colspan="1"  style="align: left;"><span style="font-size:12px;">数量</span></td>
+	<td colspan="1"  style="align: left;"><span style="font-size:12px;">单价</span></td>
+	<td colspan="2" style="align: left;"><span style="font-size:12px;">金额</span></td>
+	<td width="100" colspan="4" style="align: center;"><span style="font-size:12px;">备注</span></td>
 	</tr>
+//	<#assign sum=0>
+	<#if record.item?has_content><#list record.item as item><#assign value=item.rate+item.rate*item.taxrate1>
 	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">产品名称</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">计量单位</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">数量</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">单价</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">金额</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">备注</span></td>
+	<td colspan="2"  style="align: left;"><span style="font-size:12px;">${item.custcol8}</span></td>
+	<td colspan="2"  style="align: left;"><span style="font-size:12px;">${item.units}</span></td>
+	<td colspan="1"  style="align: left;"><span style="font-size:12px;">${item.quantity}</span></td>
+	<td colspan="1"  style="align: left;"><span style="font-size:12px;">${value?string["0.00"]}</span></td>
+	<td colspan="2"  style="align: center;"><span style="font-size:12px;">${item.grossamt}</span></td>
+	<td width="150" colspan="4" style="align: center; word-break:break-all"><span style="font-size:12px;">${item.custcol_memo}</span></td>
 	</tr>
-	<#if record.item?has_content><#list record.item as item>
-	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">${item.custcol8}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">${item.units}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">${item.quantity}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">${item.rate}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">${item.amount}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">${item.custcol_memo}</span></td>
-	</tr>
+//	<#assign sum=sum+item.quantity>
 	</#list></#if>
-	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">合计金额：</span></td>
-	<td colspan="5" rowspan="1" align="right"><span style="font-size:12px;">${record.subtotal}</span></td>
+//	<tr>
+//	<td colspan="2" style="text-align: center;"><span style="font-size:12px;">合计数量：</span></td>
+//	<td colspan="10" rowspan="1"><span style="font-size:12px;">${sum}&nbsp;&nbsp;&nbsp;#print0HTML#</span></td>
+//	</tr>
+	<tr style="border-bottom:solid">
+	<td colspan="2" style="text-align: center;"><span style="font-size:12px;">合计金额：</span></td>
+	<td colspan="10" rowspan="1"><span style="font-size:12px;">${record.subtotal}</span></td>
 	</tr>
 	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">1.质量标准：</span></td>
-	<td colspan="3" rowspan="1"><span style="font-size:12px;">${record.custbody_quality}</span></td>
-	<td colspan="2" rowspan="1" style="text-align: center;"><span style="font-size:12px;">其他约定:</span></td>
+	<td style="align: left" colspan="2"><span style="font-size:12px;">1.质量标准：</span></td>
+	<td style="align: left" colspan="10" rowspan="1"><span style="font-size:12px;">${record.custbody_quality}</span></td>
 	</tr>
 	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">2.包装要求：</span></td>
-	<td colspan="3" rowspan="1"><span style="font-size:12px;">${record.custbody_pack}</span></td>
-	<td colspan="2" rowspan="5" style="text-align: center;"><span style="font-size:12px;">${record.custbody5}</span></td>
+	<td style="align: left" colspan="2"><span style="font-size:12px;">2.包装要求：</span></td>
+	<td style="align: left" colspan="10" rowspan="1"><span style="font-size:12px;">${record.custbody_pack}</span></td>
 	</tr>
 	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">3.交货地点：</span></td>
-	<td colspan="3" rowspan="1"><span style="font-size:12px;">${record.custbody_location}</span></td>
+	<td style="align: left" colspan="2"><span style="font-size:12px;">3.交货地点：</span></td>
+	<td style="align: left" colspan="10" rowspan="1"><span style="font-size:12px;">${record.custbody_location}</span></td>
 	</tr>
 	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">4.验收方法：</span></td>
-	<td colspan="3" rowspan="1"><span style="font-size:12px;">${record.custbody_check_method}</span></td>
+	<td style="align: left" colspan="2"><span style="font-size:12px;">4.验收方法：</span></td>
+	<td style="align: left" colspan="10" rowspan="1"><span style="font-size:12px;">${record.custbody_check_method}</span></td>
 	</tr>
 	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">5.交货时间：</span></td>
-	<td colspan="3" rowspan="1"><span style="font-size:12px;">${record.custbody_receive_date}</span></td>
+	<td style="align: left" colspan="2"><span style="font-size:12px;">5.交货时间：</span></td>
+	<td style="align: left" colspan="10" rowspan="1"><span style="font-size:12px;">${record.custbody_receive_date}</span></td>
 	</tr>
 	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">6.结算方式：</span></td>
-	<td colspan="3" rowspan="1"><span style="font-size:12px;">${record.custbody3}</span></td>
+	<td style="align: left;" colspan="2"><span style="font-size:12px;">6.结算方式：</span></td>
+	<td style="align: left;" colspan="10" rowspan="1"><span style="font-size:12px;">${record.custbody3}</span></td>
 	</tr>
-	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">需方：</span></td>
-	<td colspan="2" rowspan="1"><span style="font-size:12px;">${record.subsidiary}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">供方：</span></td>
-	<td colspan="2" rowspan="1"><span style="font-size:12px;">${record.createdfrom.altname}</span></td>
-	</tr>
-	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">法人代表：</span></td>
-	<td colspan="2" rowspan="1"><span style="font-size:12px;">${record.entity.custentity2}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">法人代表：</span></td>
-	<td colspan="2" rowspan="1">&nbsp;</td>
-	</tr>
-	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">经办人员：</span></td>
-	<td colspan="2" rowspan="1"><span style="font-size:12px;">${record.entity.custentity3}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">经办人员：</span></td>
-	<td colspan="2" rowspan="1">&nbsp;</td>
-	</tr>
-	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">地址：</span></td>
-	<td colspan="2" rowspan="1"><span style="font-size:12px;">${record.entity.address.address}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">地址：</span></td>
-	<td colspan="2" rowspan="1">&nbsp;</td>
-	</tr>
-	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">电话：</span></td>
-	<td colspan="2" rowspan="1"><span style="font-size:12px;">${record.entity.phone}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">电话：</span></td>
-	<td colspan="2" rowspan="1">&nbsp;</td>
-	</tr>
-	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">传真：</span></td>
-	<td colspan="2" rowspan="1"><span style="font-size:12px;">${record.entity.fax}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">传真：</span></td>
-	<td colspan="2" rowspan="1">&nbsp;</td>
-	</tr>
-	<tr>
-	<td style="text-align: center;"><span style="font-size:12px;">开户银行：</span></td>
-	<td colspan="2" rowspan="1"><span style="font-size:12px;">${record.entity.custentity4}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">开户银行：</span></td>
-	<td colspan="2" rowspan="1">&nbsp;</td>
-	</tr>
-	<tr style="margin-bottom:10px">
-	<td style="text-align: center;"><span style="font-size:12px;">账号：</span></td>
-	<td colspan="2" rowspan="1"><span style="font-size:12px;">${record.entity.custentity5}</span></td>
-	<td style="text-align: center;"><span style="font-size:12px;">账号：</span></td>
-	<td colspan="2" rowspan="1">&nbsp;</td>
-	</tr></table>
-&nbsp;
-#print2HTML#
+	<tr style="border-bottom:solid">
+	<td style="align: left" colspan="2"><span style="font-size:12px;">7.其他约定：</span></td>
+	<td style="align: left" colspan="10" rowspan="1"><span style="font-size:12px;">${record.custbody5}</span></td>
+	</tr>#print2HTML#</table>
+
 <h1>&nbsp;</h1>
 </body>
 </pdf>

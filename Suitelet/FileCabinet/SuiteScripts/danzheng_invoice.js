@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!DOCTYPE pdf PUBLIC "-//big.faceless.org//report" "report-1.1.dtd">
+<?xml version="1.0"?><!DOCTYPE pdf PUBLIC "-//big.faceless.org//report" "report-1.1.dtd">
 <pdf>
 <head>
 	<link name="NotoSans" type="font" subtype="truetype" src="${nsfont.NotoSans_Regular}" src-bold="${nsfont.NotoSans_Bold}" src-italic="${nsfont.NotoSans_Italic}" src-bolditalic="${nsfont.NotoSans_BoldItalic}" bytes="2" />
@@ -38,23 +38,15 @@
 	<h1><strong><span style="font-family:arial,helvetica,sans-serif;"><span style="font-size:24px;"><span style="text-align: center;">${record.subsidiary}</span></span></span></strong></h1>
 	</td>
 	</tr></table>
-	
-	<table border="0" cellpadding="0" cellspacing="2"><tr>
-	<td height="10px"></td>
-	</tr></table>
-	
+
 <table align="center" border="0" cellpadding="0" cellspacing="2"><tr>
 	<td style="text-align: center;">
-	<h1><span style="font-family:arial,helvetica,sans-serif;"><span style="font-size:18px;"><span style="text-align: center;">${record.subsidiary.custrecord_subsidiary_en}</span></span></span></h1>
+	<h1><span style="font-family:arial,helvetica,sans-serif;"><span style="font-size:22px;"><span style="text-align: center;">${companyInformation.companyname}</span></span></span></h1>
 	</td>
 	</tr></table>
 
-	<table border="0" cellpadding="0" cellspacing="2"><tr>
-	<td height="10px"></td>
-	</tr></table>
-	
 <table align="center" border="0" cellpadding="0" cellspacing="2"><tr>
-	<td style="text-align: center;"><span style="text-align: center;">${record.subsidiary.custrecord_address_print}</span></td>
+	<td style="text-align: center;"><span style="text-align: center;">${companyInformation.mainaddress_text}</span></td>
 	</tr></table>
 &nbsp;
 
@@ -65,37 +57,25 @@
 	</tr></table>
 &nbsp;
 
-
-<table border="0" cellpadding="3" cellspacing="0" style="width:700px;"><tr>
-	<td style="width:100px"></td>
-	<th><span style="align: right; font-size:12px;"><strong>TO:</strong></span></th>
-	<td><span style="align: left; font-size:12px;">${record.entity.companyname}</span></td>
-	<td style="width:50px"></td>
-	<th><span style="align: right; font-size:12px;"><strong>INVOICE NO.:</strong></span></th>
-	<td><span style="align: left; font-size:12px;">${record.custbody6}</span></td>
-	<td style="width:100px"></td>
+<div>&nbsp;
+<table align="center" border="0" cellpadding="0" cellspacing="2" style="width:700px;"><tr>
+	<th><span style="font-size:12px;">TO:</span></th>
+	<td><span style="font-size:12px;">${record.entity}</span></td>
+	<th><span style="font-size:12px;">INVOICE NO.:</span></th>
+	<td><span style="font-size:12px;">${record.tranid}</span></td>
 	</tr>
 	<tr>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td colspan="1" rowspan="4"><span style="align: left; font-size:12px;">${record.billaddress}</span></td>
-	<td>&nbsp;</td>
-	<th><span style="align: right; font-size:12px;"><strong>DATE:</strong></span></th>
-	<td><span style="align: left; font-size:12px;">${record.trandate}</span></td>
-	<td>&nbsp;</td>
+	<td colspan="1" rowspan="4"><span style="font-size:12px;">${record.billaddress}</span></td>
+	<th><span style="font-size:12px;">DATE:</span></th>
+	<td><span style="font-size:12px;">${record.trandate}</span></td>
 	</tr>
 	<tr>
 	<td>&nbsp;</td>
-	<td></td>
-	<td></td>
-	<td>&nbsp;</td>
-	<td></td>
-	<td>&nbsp;</td>
+	<th><span style="font-size:12px;">S/O:</span></th>
+	<td><span style="font-size:12px;">${record.otherrefnum}</span></td>
 	</tr>
 	<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
@@ -104,25 +84,16 @@
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
+	</tr>
+	<tr>
 	<td>&nbsp;</td>
+	<td><span style="font-size: 12px;">${record.entity.phone}</span></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	</tr>
 	<tr>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td><span style="align: left; font-size: 12px;">${record.entity.phone}</span></td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	</tr>
-	<tr>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td><span style="align: left; font-size: 12px;">${record.entity.vatregnumber}</span></td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
+	<td><span style="font-size: 12px;">${record.entity.vatregnumber}</span></td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	</tr></table>
@@ -131,32 +102,34 @@
 	<td style="height:20px">&nbsp;</td>
 	</tr></table>
 
-<table align="center" border="1" cellpadding="3" cellspacing="2" style="width:700px;"><tr style="margin-top:10px">
-	<th colspan="2" style="align: left;"><span style="font-size:12px;"><strong>FROM:${record.custbody_departure?upper_case}</strong></span></th>
-	<th colspan="2" style="align: center;"><span style="font-size:12px;"><strong>TO:${record.custbody_destination?upper_case}</strong></span></th>
-	<th colspan="2" style="align: center;"><span style="font-size:12px;"><strong>${record.custbody_term}</strong></span></th>
+<table align="center" border="1" cellpadding="0" cellspacing="2" style="width:700px;"><tr style="margin-top:10px">
+	<th colspan="2" rowspan="1" style="text-align: center;"><span style="font-size:12px;">FROM:${record.custbody_departure?upper_case}</span></th>
+	<th colspan="2" rowspan="1" style="text-align: center;"><span style="font-size:12px;">TO:${record.custbody_destination?upper_case}</span></th>
+	<th colspan="2" rowspan="1" style="text-align: center;"><span style="font-size:12px;">${record.terms}</span></th>
 	</tr>
 	<tr>
-	<th style="align: left;"><span style="font-size:12px;"><strong>MARKS &amp; NOS.</strong></span></th>
-	<th style="align: center;"><span style="font-size:12px;"><strong>P.O.</strong></span></th>
-	<th colspan="2" style="align: center;"><span style="font-size:12px;"><strong>QUANTITIES AND DESCRIPTIONS</strong></span></th>
-	<th style="align: center;"><span style="font-size:12px;"><strong>UNIT PRICE</strong></span></th>
-	<th style="align: center;"><span style="font-size:12px;"><strong>TTL AMOUNT</strong></span></th>
+	<th rowspan="1" style="text-align: center;"><span style="font-size:12px;">MARKS &amp; NOS.</span></th>
+	<th rowspan="1" style="text-align: center;"><span style="font-size:12px;">P.O.</span></th>
+	<th colspan="2" rowspan="1" style="text-align: center;"><span style="font-size:12px;">QUANTITIES AND DESCRIPTIONS</span></th>
+	<th style="text-align: center;"><span style="font-size:12px;">UNIT PRICE</span></th>
+	<th style="text-align: center;"><span style="font-size:12px;">TTL AMOUNT</span></th>
 	</tr>
 	<tr>
 	<td colspan="6">&nbsp;</td>
 	</tr>
 	<tr>
-	<th style="align: left;"><span style="font-size:12px;"><strong>N/M</strong></span></th>
+	<th style="text-align: left;"><span style="font-size:12px;">N/M</span></th>
 	<td colspan="5">&nbsp;</td>
 	</tr>
 	<tr>
 	<td colspan="6">&nbsp;</td>
 	</tr>
-	#printHTML#
+	
+	
+	
 	</table>
 
-<div style="align: center;">&nbsp;</div>
-
+<div style="text-align: center;">&nbsp;</div>
+</div>
 </body>
 </pdf>

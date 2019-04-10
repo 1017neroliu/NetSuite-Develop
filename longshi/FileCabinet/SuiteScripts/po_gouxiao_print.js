@@ -1,7 +1,8 @@
 /**
  * Module Description
  * 
- * Version Date Author Remarks 1.00 16 Jul 2018 Nero
+ * Version 		Date 		Author 		Remarks 
+ * 1.00 	16 Jul 2018 	Nero
  * 
  */
 function beforeLoad(type, form, request) {
@@ -12,18 +13,20 @@ function beforeLoad(type, form, request) {
 		nlapiLogExecution('debug', 'recType:' + recType, 'type:' + type);
 		// 当处于view状态时添加打印按钮
 		if (type == 'view') {
-			nlapiLogExecution('debug', 'test', '123');
+			nlapiLogExecution('error', 'test', '123');
 			
 			form.addButton(
 							"custpage_item_fulfillment_print",
 							"打印购销合同",
 							"window.open("
-							+ "'/app/site/hosting/scriptlet.nl?script=32&deploy=1&"
+							+ "'/app/site/hosting/scriptlet.nl?script=33&deploy=1&"
 							+ serializeURL({
 								recType : recType,
 								recId : recId
 							}) + "'" + ",'_blank'),window.focus()");
 			nlapiLogExecution('debug', 'test', '222');
+//https://system.netsuite.com/app/site/hosting/scriptlet.nl?script=33&deploy=1
+//			&recType=purchaseorder&recId=2548
 		}
 	} catch (e) {
 		processException(e);
@@ -35,6 +38,7 @@ function print(request, response) {
 		var recType = request.getParameter("recType");
 		var recId = request.getParameter("recId");
 		var record = nlapiLoadRecord(recType, recId);
+		var unit_total = record.getLineItemValue('item', 'units_display', 1);
 		//取供方的值
 		var vendorId = record.getFieldValue('entity');
 		var vendor = nlapiLoadRecord('vendor', vendorId);
@@ -67,52 +71,52 @@ function print(request, response) {
 		
 		//拼接供需方信息
 		var gx = '<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">需方：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xname+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">供方：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+name+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">需方：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+xname+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">供方：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+name+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">法人代表：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xfaren+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">法人代表：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+faren+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">法人代表：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+xfaren+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">法人代表：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+faren+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">经办人员：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xjingban+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">经办人员：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+jingban+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">经办人员：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+xjingban+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">经办人员：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+jingban+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">地址：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xadd+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">地址：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+add+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">地址：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+xadd+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">地址：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+add+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">电话：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xphone+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">电话：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+phone+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">电话：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+xphone+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">电话：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+phone+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">传真：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xfax+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">传真：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+fax+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">传真：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+xfax+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">传真：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+fax+'</span></td>'+
 			'</tr>'+
 			'<tr>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">开户银行：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xyinhang+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">开户银行：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+yinhang+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">开户银行：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+xyinhang+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">开户银行：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+yinhang+'</span></td>'+
 			'</tr>'+
-			'<tr style="margin-bottom:10px">'+
-			'<td style="text-align: center;"><span style="font-size:12px;">账号：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+xzhanghao+'</span></td>'+
-			'<td style="text-align: center;"><span style="font-size:12px;">账号：</span></td>'+
-			'<td colspan="2" rowspan="1"><span style="font-size:12px;">'+zhanghao+'</span></td>'+
+			'<tr>'+	
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">账号：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+xzhanghao+'</span></td>'+
+			'<td style="align: left;" colspan="2"><span style="font-size:12px;">账号：</span></td>'+
+			'<td style="align: left;" colspan="4" rowspan="1"><span style="font-size:12px;">'+zhanghao+'</span></td>'+
 			'</tr>';
 		
 		nlapiLogExecution("debug", "result", "OK");
@@ -120,7 +124,8 @@ function print(request, response) {
 		var htmlFile = nlapiLoadFile(1122);
 		var html = htmlFile.getValue();
 		// 用打印模板替换xml
-		 html1 = html.replace("#print1HTML#", name);
+		 html0 = html.replace("#print0HTML#",unit_total);
+		 html1 = html0.replace("#print1HTML#", name);
 		 html2 = html1.replace("#print2HTML#",gx);
 		// 生成打印表单，renderer对象将模板作为字符串传递给FreeMarker方法
 		var renderer = nlapiCreateTemplateRenderer();

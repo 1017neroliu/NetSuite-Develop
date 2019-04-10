@@ -88,7 +88,7 @@ function processException(e, info, sendEmail) {
     if (typeof console == "undefined") { // NS
         if (sendEmail != false) {
             _log('nlapiSendEmail', code);
-            nlapiSendEmail(-5, 'nero.liu@tctchina.com.cn', code, message);
+            nlapiSendEmail(-5, 'allan.hou@tctchina.com.cn', code, message);
         }
     } else {
         alert(code + '///' + message);
@@ -204,7 +204,7 @@ function _log_email(title, detail) {
     detail = detail || 'Something is error..';
 
     // self sending
-    nlapiSendEmail(-5, 'nero.liu@tctchina.com.cn', nlapiGetContext().getDeploymentId() + ': ' + title, '<pre>' + detail + '</pre>');
+    nlapiSendEmail(-5, 'allan.hou@tctchina.com.cn', nlapiGetContext().getDeploymentId() + ': ' + title, '<pre>' + detail + '</pre>');
 }
 
 
@@ -276,7 +276,7 @@ if (!Array.prototype.find) {
 
 
 //////////////////////
-//// Examples ////////
+//// Examples
 //////////////////////
 //
 //[1,2,3,4,5,6].diff( [3,4,5] );
@@ -453,6 +453,7 @@ function getparams(request) {
  * @governance 0
  */
 function checkGovernance() {
+
 
     if (nlapiGetContext().getExecutionContext() != 'scheduled') {
         return;

@@ -3,7 +3,13 @@
  */
 
 // : 回头整理下这个文件， 只保留最最通用的，其他的移动到 每个子文件中， 或者New 子文件的Utils
-/**this用法：在方法中，谁调用方法this就指向谁，在构造函数中，new谁，this就指向谁，其他情况this就代表window对象**/
+/**
+ * typeof：返回的是变量的数据类型
+ * window.console:提供了向浏览器控制台输出日志信息的方法
+ * 		  window表示窗口
+ * 		  console对象提供对浏览器控制台的接入
+ * 
+ */
 if (typeof this.console == 'function' && !window.console) {// browser and this refer to windows object
     //if (!window.console) { // old browser
     window.console = {
@@ -18,14 +24,15 @@ if (typeof this.console == 'function' && !window.console) {// browser and this r
 //Object.prototype.map = function (fn) {
 //    return [this].map(fn);
 //};
-
+//解析异常
 function parseException(e) {
+	
     var code, message;
 
     var userMessage = null;
 
     if (typeof e == "object") {
-    	//判断e属于nlobjError类
+    	//instanceof类似typeof，但是当typeof采用引用类型时，返回的都是object，这时就采用instanceof
         if (e instanceof nlobjError) {
             code = e.getCode() || "nlobjError";
             var st = e.getStackTrace();
@@ -49,7 +56,6 @@ function parseException(e) {
         code = 'NS_ERROR';
         message = e.toString();
     }
-
     if (userMessage == null) userMessage = message;
 
     var context = nlapiGetContext();
@@ -88,7 +94,7 @@ function processException(e, info, sendEmail) {
     if (typeof console == "undefined") { // NS
         if (sendEmail != false) {
             _log('nlapiSendEmail', code);
-            nlapiSendEmail(-5, 'nero.liu@tctchina.com.cn', code, message);
+            nlapiSendEmail(-5, 'allan.hou@tctchina.com.cn', code, message);
         }
     } else {
         alert(code + '///' + message);
@@ -204,7 +210,7 @@ function _log_email(title, detail) {
     detail = detail || 'Something is error..';
 
     // self sending
-    nlapiSendEmail(-5, 'nero.liu@tctchina.com.cn', nlapiGetContext().getDeploymentId() + ': ' + title, '<pre>' + detail + '</pre>');
+    nlapiSendEmail(-5, 'allan.hou@tctchina.com.cn', nlapiGetContext().getDeploymentId() + ': ' + title, '<pre>' + detail + '</pre>');
 }
 
 
@@ -276,7 +282,7 @@ if (!Array.prototype.find) {
 
 
 //////////////////////
-//// Examples ////////
+//// Examples
 //////////////////////
 //
 //[1,2,3,4,5,6].diff( [3,4,5] );
@@ -346,7 +352,7 @@ function extend(targetObj) {
 
     return targetObj;
 
-    // 不用闭包内循环， 怕有麻烦
+    // 不用闭包内循环， 拍有麻烦
 
     //Array.prototype.slice.call(arguments, 1).forEach(function (source) {
     //    if (source) {
@@ -453,6 +459,7 @@ function getparams(request) {
  * @governance 0
  */
 function checkGovernance() {
+
 
     if (nlapiGetContext().getExecutionContext() != 'scheduled') {
         return;
