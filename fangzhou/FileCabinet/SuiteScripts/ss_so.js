@@ -12,18 +12,21 @@
 			如果相关记录没有item fulfillment，那么也满足条件。
 		3）	创建日期（字段ID：createddate）早于当前系统日期21天（不包括21天）；
 		将该销售订单执行“订单关闭”操作；
+		在关闭订单的前七天发送邮件“销售订单：1234将于七天后关闭！”
 	2．	当销售订单满足以下条件：
 		1）	销售订单的状态为“pending fulfilled”和“partially fulfilled”；
 		2）	销售订单相关记录中的item fulfillment，单据状态不是“picked” and  “packed item fulfillment”；
 		3）	创建日期（字段ID：createddate）早于当前系统日期14天（不包括14天）；
 		4）	销售订单上的客户对应的客户主数据的CUSTOMER ACCOUNT TYPE字段（字段ID：custentitycustentity_cat）不等于P；
 		将该销售订单执行“订单关闭”操作；
+		在关闭订单的前七天发送邮件“销售订单：1234将于七天后关闭！”
 	3．	当销售订单满足以下条件：
 		1）	销售订单的状态为“pending fulfilled”和“partially fulfilled”；
 		2）	销售订单相关记录中的item fulfillment，单据状态不是“picked”and  “packed item fulfillment”；
 		3）	创建日期（字段ID：createddate）早于当前系统日期7天（不包括7天）；
 		4）	销售订单上的客户对应的客户主数据的CUSTOMER ACCOUNT TYPE字段（字段ID：custentitycustentity_cat）不等于P和S；
 		将该销售订单执行“订单关闭”操作。
+		在关闭订单的前七天发送邮件“销售订单：1234将于七天后关闭！”
  */
 
 function scheduled(type) {
@@ -73,7 +76,27 @@ function scheduled(type) {
 					
 					//加载记录	
 					var record = nlapiLoadRecord('salesorder', recId);
-					
+					//获取销售团队下的primary员工，获取到员工的内部ID，并到员工记录上获取该员工的邮箱
+					var num = record.getLineItemCount('salesteam');
+					for (var s = 1; s <= num; s++) {
+						//获取primary字段
+						var flag = record.getLineItemValue('salesteam', 'isprimary', s);
+						//判断primary字段是否为T，如果为T，那么获取当前行号，并获取该行号的员工的内部ID===primary
+						if(flag == 'T'){
+//							var rowNum = record.getCurrentLineItemIndex('salesteam');
+							var primary = record.getLineItemValue('salesteam', 'employee', s);
+						}
+					}
+					//加载员工记录
+					var employee = nlapiLoadRecord('employee', primary);
+//					nlapiLogExecution('error', 'primary', primary);
+					//获取员工的邮箱
+					var email = employee.getFieldValue('email');
+//					nlapiLogExecution('error', 'email', email);
+					var subsidiary = record.getFieldValue('subsidiary');
+					var soNum = record.getFieldValue('tranid');
+					//子公司为嘉兴奥索的不执行此脚本
+					if(subsidiary != "16"){
 					//当前北京时间 
 					var now = new Date();
 					var tmp = now.getHours();
@@ -93,17 +116,31 @@ function scheduled(type) {
 //					nlapiLogExecution('debug', 'day', day);
 					if((orderStatus == 'Partially Fulfilled' || orderStatus == 'Pending Fulfillment') && status == '0'){
 					//第一种
-					if(day > 21){
+					if(day==31){
+						var subject1 = "SO will be close notification";
+						var body1 = "Attention: Your Sales Order "+soNum+" will be close in 7 days！";
+						nlapiSendEmail(primary, email, subject1, body1);	
+//						nlapiLogExecution('error', 'day1', day);
+//						nlapiLogExecution('error', '1', '1');
+					}
+					if(day > 37){
 						var num1 = record.getLineItemCount('item');//关闭明细行才可以关闭订单，user events不适用！
 						for (var x = 1; x <= num1; x++) {
 							record. setLineItemValue('item','isclosed', x,'T');
 						}
 						nlapiSubmitRecord(record);
 						var so = nlapiLoadRecord('salesorder', recId);
-						nlapiLogExecution('debug', '更新后订单状态1', so.getFieldValue('orderstatus'));
+//						nlapiLogExecution('debug', '更新后订单状态1', so.getFieldValue('orderstatus'));
 					}else 
 					//第二种
-					if((day > 14 && day <= 21) && accountType != '1'){
+					if(day==22 && accountType != '1'){
+							var subject2 = "SO will be close notification";
+							var body2 = "Attention: Your Sales Order "+soNum+" will be close in 7 days！";
+							nlapiSendEmail(primary, email, subject2, body2);	
+//							nlapiLogExecution('error', 'day2', day);
+//							nlapiLogExecution('error', '2', '2');
+					}
+					if((day > 28 && day <= 37) && accountType != '1'){
 //						record.setFieldValue('orderstatus', 'H');
 						var num2 = record.getLineItemCount('item');
 						for (var j = 1; j <= num2; j++) {
@@ -111,10 +148,17 @@ function scheduled(type) {
 						}
 						nlapiSubmitRecord(record);
 						var so = nlapiLoadRecord('salesorder', recId);
-						nlapiLogExecution('debug', '更新后订单状态2', so.getFieldValue('orderstatus'));
+//						nlapiLogExecution('debug', '更新后订单状态2', so.getFieldValue('orderstatus'));
 					}else 
+					if(day==15 && (accountType != '1' && accountType != '3')){
+							var subject3 = "SO will be close notification";
+							var body3 = "Attention: Your Sales Order "+soNum+" will be close in 7 days！";
+							nlapiSendEmail(primary, email, subject3, body3);
+//							nlapiLogExecution('error', 'day3', day);
+//							nlapiLogExecution('error', '3', '3');
+					}
 					//第三种
-					if((day > 7 && day <=14) && (accountType != '1' && accountType != '3')){
+					if((day > 21 && day <= 28) && (accountType != '1' && accountType != '3')){
 //						record.setFieldValue('orderstatus', 'H');这种无法关闭订单
 						var num3 = record.getLineItemCount('item');
 						for (var a = 1; a <= num3; a++) {
@@ -128,6 +172,7 @@ function scheduled(type) {
 					//解决脚本执行超过限制问题
 					checkGovernance();
 				}
+			}
 			}
 			//当条件为假时，不再执行do，跳出循环
 		} while (result != null && result.length > 0);
