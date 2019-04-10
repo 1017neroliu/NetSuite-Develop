@@ -19,9 +19,8 @@ function createItemReceipt(dataIn) {
 		try {
 			if (dataIn) {
 				//创建货品收据（item receipt）
-				var receiptRec = nlapiTransformRecord('transferorder',
-						dataIn.transferOrderId, 'itemreceipt');
-				receiptRec.setFieldValue('memo', '测试无指令接口');
+				var receiptRec = nlapiTransformRecord('transferorder',dataIn.transferOrderId, 'itemreceipt');
+//				receiptRec.setFieldValue('memo', '测试无指令接口');
 
 				var receiptId = nlapiSubmitRecord(receiptRec);
 				nlapiLogExecution('error', 'receiptId', receiptId);
@@ -63,7 +62,7 @@ function createItemReceipt(dataIn) {
 			}
 		} catch (e) {
 			writeLog('创建记录失败', 
-					 'record creation failed', 
+					 e.message, 
 					 user,
 					 scriptId, 
 					 'ERROR', 
@@ -72,7 +71,8 @@ function createItemReceipt(dataIn) {
 			
 			return {
 				"status" : "failure",
-				"message" : "创建记录失败！"
+				"message" : "创建入库单失败！",
+				"reason" : e.message
 			};
 		}
 }

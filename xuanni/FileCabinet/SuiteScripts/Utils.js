@@ -172,7 +172,7 @@ function _nlapiLogExecution(logType, title, detail) {
         }
     }
 }
-function _cutText(text, size) {
+function _cutText(text, size) {//超过最大字段长度，NS可存最大字符串长度为300
     // EXCEEDED_MAX_FIELD_LENGTH Detail: The field custbody_script_memo contained more than the maximum number ( 300 )
 
     size = size || 300;
@@ -180,10 +180,9 @@ function _cutText(text, size) {
     if (typeof text != 'string') {
         text = text.toString();
     }
-    if (text.length > size) {
+    if (text.length > size) {//如果大于300，截取（0,300），然后接着拼接？
         text = text.substring(0, size);
     }
-
     return text;
 
 }
@@ -248,7 +247,7 @@ Array.prototype.same = function (a) {
 };
 
 function _toarray(obj) {
-    if (!Array.isArray(obj)) obj = [obj];
+    if (!Array.isArray(obj)) obj = [obj];//对象转数组
     return obj;
 }
 if (!Array.prototype.find) {
@@ -260,7 +259,7 @@ if (!Array.prototype.find) {
             throw new TypeError('predicate must be a function');
         }
         var list = Object(this);
-        var length = list.length >>> 0;
+        var length = list.length >>> 0;//">>>"无符号右移。无论是正数还是负数，高位通通补0
         var thisArg = arguments[1];
         var value;
 
@@ -540,7 +539,7 @@ var DateCompare = {
                 NaN
         );
     },
-    inRange: function (d, start, end) {
+    inRange: function (d, start, end) {//检查是否在某范围内的日期
         // Checks if date in d is between dates in start and end.
         // Returns a boolean or NaN:
         //    true  : if d is between start and end (inclusive)
@@ -559,7 +558,7 @@ var DateCompare = {
 function arr_to_chunk(arr, chunkSize) {
     var groups = [], i;
     for (i = 0; i < arr.length; i += chunkSize) {
-        groups.push(arr.slice(i, i + chunkSize));
+        groups.push(arr.slice(i, i + chunkSize)); //slice()返回指定元素，[i,i + chunkSize]数组
     }
     return groups;
 }

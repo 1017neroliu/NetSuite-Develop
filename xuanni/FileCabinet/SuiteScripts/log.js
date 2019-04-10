@@ -9,10 +9,13 @@
 function writeLog(name, detils, user, scriptId, status, request, response) {
 	
     var logRec = nlapiCreateRecord('customrecord_lijing_api_log');
+    var time = nlapiDateToString(new Date());
+    
     logRec.setFieldValue('name', name);//调用接口目的
     logRec.setFieldValue('custrecord_log_transaction_detils', detils);//调用接口详情
     logRec.setFieldValue('custrecord_log_transaction_user', user);//修改record的ID
-
+    logRec.setFieldValue('custrecord_log_date', time);//修改record的时间
+    
 //    number = parseInt(number);
 //    if (!isNaN(number)) {
 //        logRec.setFieldValue('custrecord_log_linked_danju', number);

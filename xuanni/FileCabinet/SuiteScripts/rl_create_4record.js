@@ -1,5 +1,5 @@
 /**
- * 有源单退货
+ * 有源单退货（active list returns）
  * 云合提供接口，同时生成退货授权，货品收据，贷项通知单和客户退款；NS中单价为未税单价。
  * @param dataIn
  * @returns
@@ -8,7 +8,7 @@
 function create4Record(dataIn) {
 	//获取context
 	var context = nlapiGetContext();
-	//获取当前用户名，用于后面写入日志record	
+	//获取当前用户名，用于后面写入日志record
 	var user = context.getName();
 	//获取当前操作的脚本的id
 	var scriptId = context.getScriptId();
@@ -24,8 +24,19 @@ function create4Record(dataIn) {
 				var returnId;
 				var returnRec = nlapiCreateRecord('returnauthorization');
 				//获取请求的数据，并设置body上的字段值
-				returnRec.setFieldValue('entity', dataIn.customerId);//客户ID
-				returnRec.setFieldValue('location', dataIn.location);//地点ID
+//				var Csearch = nlapiSearchRecord('customer', null,
+//						[new nlobjSearchFilter('entityid', null, 'is',dataIn.customerCode)]);
+//				
+//				if (Csearch != null) {
+//					var customerId2 = Csearch[0].getId();
+//				}
+				//从客户主数据上获取绑定的location
+				var customerRec = nlapiLoadRecord('customer', dataIn.customerCode);
+				var location2 = customerRec.getFieldValue('custentity_locationid');
+				
+				returnRec.setFieldValue('custbody_lijing_recordid', dataIn.orderId);//丽晶单据ID
+				returnRec.setFieldValue('entity', dataIn.customerCode);//客户ID
+				returnRec.setFieldValue('location', location2);//地点ID
 				returnRec.setFieldValue('custbody10', dataIn.orderType);//订单类型ID
 	//			returnRec.setFieldValue('custbody_top_up_number',dataIn.topUpNumber);//充值单单号
 	//			returnRec.setFieldValue('custbody24', dataIn.vipId);//vip ID
@@ -36,7 +47,7 @@ function create4Record(dataIn) {
 					returnRec.setFieldValue('memo', " ");
 				}
 				//加载客户record获取免税代码
-				var customerRec = nlapiLoadRecord('customer', dataIn.customerId);
+				var customerRec = nlapiLoadRecord('customer', dataIn.customerCode);
 				var taxCode2 = customerRec.getFieldValue('taxitem');
 				//请求的数据是json数组，先转换成json对象，再遍历，取值（dataIn就是object类型，不需要用JSON.parse()进行转换）
 				var source = dataIn.itemData;
@@ -49,16 +60,14 @@ function create4Record(dataIn) {
 					nlapiLogExecution('error', 'dataItemCode', dataItemCode);
 	//				nlapiLogExecution('error', 'dataTaxcode', dataTaxcode);
 					var search = nlapiSearchRecord('item', null,
-							[ new nlobjSearchFilter('itemid', null, 'is',
-									dataItemCode) ]);
+							[new nlobjSearchFilter('itemid', null, 'is',dataItemCode)]);
+					
 					if (search != null) {
 						var itemId2 = search[0].getId();
 					}
 					returnRec.setCurrentLineItemValue('item', 'item', itemId2);// 货品ID
-					returnRec.setCurrentLineItemValue('item', 'taxcode',
-							taxCode2);//货品taxcode
-					returnRec.setCurrentLineItemValue('item', 'amount',
-							dataAmount);//货品数量
+					returnRec.setCurrentLineItemValue('item', 'taxcode',taxCode2);//货品taxcode
+					returnRec.setCurrentLineItemValue('item', 'quantity',dataAmount);//货品数量
 					//提交对明细行的操作的数据
 					returnRec.commitLineItem('item');
 				}
@@ -77,8 +86,7 @@ function create4Record(dataIn) {
 				for (var i = 1; i <= num1; i++) {
 					var itemId = returnRec.getLineItemValue('item', 'item', i);
 	//				var taxCode = returnRec.getLineItemValue('item', 'taxcode', i);
-					var amount = returnRec
-							.getLineItemValue('item', 'amount', i);
+					var amount = returnRec.getLineItemValue('item', 'amount', i);
 					itemobj.push({
 						"itemId" : itemId,
 	//					"taxCode" : taxCode,
@@ -88,19 +96,27 @@ function create4Record(dataIn) {
 				if (returnId) {
 
 					writeLog('新建退货授权成功' + returnId,
-							'return authorisation is created', user, scriptId,
-							'OK', JSON.stringify(dataIn), JSON.stringify(data));
+							'return authorisation is created', 
+							user, 
+							scriptId,
+							'OK', 
+							JSON.stringify(dataIn), 
+							JSON.stringify(data));
 
 				}
 			} catch (e) {
 				
 				writeLog('新建退货授权失败',
-						'return authorisation creation failed', user,
-						scriptId, 'ERROR', JSON.stringify(dataIn));
+						e.message, 
+						user,
+						scriptId, 
+						'ERROR', 
+						JSON.stringify(dataIn));
 				
 				return {
 					"status" : "failure",
-					"message" : "创建退货授权单失败!"
+					"message" : "创建退货授权单失败!",
+					"reason" : e.message
 				};
 			}
 			//当item receipt保存后，return authorisation的状态会自动变成pending refund状态
@@ -114,19 +130,27 @@ function create4Record(dataIn) {
 				if (receiptId) {
 
 					writeLog('新建货品收据单成功' + receiptId,
-							'item receipt is created', user, scriptId, 'OK',
-							JSON.stringify(dataIn), JSON.stringify(data));
+							'item receipt is created', 
+							user, 
+							scriptId, 
+							'OK',
+							JSON.stringify(dataIn), 
+							JSON.stringify(data));
 
 				}
 			} catch (e) {
 				
 				writeLog('新建货品收据单失败',
-						'item receipt creation failed', user, scriptId,
-						'ERROR', JSON.stringify(dataIn));
+						e.message, 
+						user, 
+						scriptId,
+						'ERROR', 
+						JSON.stringify(dataIn));
 				
 				return {
 					"status" : "failure",
-					"message" : "创建货品收据单失败!"
+					"message" : "创建货品收据单失败!",
+					"reason" : e.message
 				};
 			}
 			//============================================================================
@@ -139,75 +163,88 @@ function create4Record(dataIn) {
 				if (creditmemoId) {
 
 					writeLog('新建贷项通知单成功' + creditmemoId,
-							'credit memo is created', user, scriptId, 'OK',
-							JSON.stringify(dataIn), JSON.stringify(data));
+							'credit memo is created', 
+							user, 
+							scriptId, 
+							'OK',
+							JSON.stringify(dataIn), 
+							JSON.stringify(data));
 
 				}
 			} catch (e) {
 				
 				writeLog('新建贷项通知单失败',
-						'credit memo creation failed', user, scriptId,
-						'ERROR', JSON.stringify(dataIn));
+						e.message, 
+						user, 
+						scriptId,
+						'ERROR', 
+						JSON.stringify(dataIn));
 				
 				return {
 					"status" : "failure",
-					"message" : "创建贷项通知单失败!"
+					"message" : "创建贷项通知单失败!",
+					"reason" : e.message
 				};
 			}
 			//============================================================================
 			//创建客户退款
-			try {
-				var refundRec;
-				refundRec = nlapiCreateRecord('customerrefund', {
-					recordmode : 'dynamic'
-				});
-				refundRec.setFieldValue('customer', dataIn.customerId);//客户ID
-				refundRec.setFieldValue('paymentmethod', dataIn.paymentMethod);//付款方式ID
-				var paymentMethod = refundRec.getFieldValue('paymentmethod');
-				var line = refundRec.getLineItemCount('apply');
-				nlapiLogExecution('error', 'line', line);
-				for (var a = 1; a <= line; a++) {
-					//选择一行
-					refundRec.selectLineItem('apply', a);
-					//获取字段值，（apply的ID和type的ID也和creditmemoId相同）和ORIG.AMT.的值
-					var applyID = refundRec.getCurrentLineItemValue('apply',
-							'doc');
-					var amountRemaining = refundRec.getCurrentLineItemValue(
-							'apply', 'due');
-
-					if (applyID == creditmemoId) {
-						refundRec
-								.setCurrentLineItemValue('apply', 'apply', 'T');
-						refundRec.setCurrentLineItemValue('apply', 'amount',
-								amountRemaining);
-						refundRec.commitLineItem('apply');
-					}
-				}
-				var refundId = nlapiSubmitRecord(refundRec);
-				if (refundId) {
-
-					writeLog('新建客户退款单成功' + refundId,
-							'ustomer refund is created', user, scriptId, 'OK',
-							JSON.stringify(dataIn), JSON.stringify(data));
-
-				}
-			} catch (e) {
-				
-				writeLog('新建客户退款单失败',
-						'customer refund creation failed', user, scriptId,
-						'ERROR', JSON.stringify(dataIn));
-				
-				return {
-					"status" : "failure",
-					"message" : "创建客户退款单失败!"
-				};
-			}
+//			try {
+//				var refundRec;
+//				refundRec = nlapiCreateRecord('customerrefund', {recordmode : 'dynamic'});
+//				refundRec.setFieldValue('custbody_lijing_recordid',dataIn.orderId);//丽晶单据ID
+//				refundRec.setFieldValue('customer',dataIn.customerCode);//客户ID
+//				refundRec.setFieldValue('paymentmethod', dataIn.paymentMethod);//付款方式ID
+//				var paymentMethod = refundRec.getFieldValue('paymentmethod');
+//				var line = refundRec.getLineItemCount('apply');
+//				nlapiLogExecution('error', 'line', line);
+//				for (var a = 1; a <= line; a++) {
+//					//选择一行
+//					refundRec.selectLineItem('apply', a);
+//					//获取字段值，（apply的ID和type的ID也和creditmemoId相同）和ORIG.AMT.的值
+//					var applyID = refundRec.getCurrentLineItemValue('apply',
+//							'doc');
+//					var amountRemaining = refundRec.getCurrentLineItemValue(
+//							'apply', 'due');
+//
+//					if (applyID == creditmemoId) {
+//						refundRec.setCurrentLineItemValue('apply', 'apply', 'T');
+//						refundRec.setCurrentLineItemValue('apply', 'amount',amountRemaining);
+//						refundRec.commitLineItem('apply');
+//					}
+//				}
+//				var refundId = nlapiSubmitRecord(refundRec);
+//				if (refundId) {
+//
+//					writeLog('新建客户退款单成功' + refundId,
+//							'ustomer refund is created', 
+//							user, 
+//							scriptId, 
+//							'OK',
+//							JSON.stringify(dataIn), 
+//							JSON.stringify(data));
+//
+//				}
+//			} catch (e) {
+//				
+//				writeLog('新建客户退款单失败',
+//						e.message, 
+//						user, 
+//						scriptId,
+//						'ERROR', 
+//						JSON.stringify(dataIn));
+//				
+//				return {
+//					"status" : "failure",
+//					"message" : "创建客户退款单失败!",
+//					"reason" : e.message
+//				};
+//			}
 			
 			
-			if(returnId && receiptId && creditmemoId && refundId){
+			if(returnId && receiptId && creditmemoId){
 				data = {
-						"customerId" : customerId,
-						"paymentMethod" : paymentMethod,
+						"customerId" : dataIn.customerCode,
+//						"paymentMethod" : paymentMethod,
 						"location" : location,
 						"orderType" : orderType,
 //						"topUpNumber" : topUpNumber,
@@ -218,7 +255,7 @@ function create4Record(dataIn) {
 					Jsondata.push(data);
 				responer = {
 						"status" : "success",
-						"message" : Jsondata,
+						"message" : Jsondata
 					}
 				return JSON.stringify(responer);
 			}
@@ -227,7 +264,8 @@ function create4Record(dataIn) {
 		
 		return {
 			"status" : "failure",
-			"message" : "创建记录失败!"
+			"message" : "有源单退货失败!",
+			"reason" : e.message
 		};
 	}
 }

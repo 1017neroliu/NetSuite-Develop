@@ -22,13 +22,16 @@ function customerDeposit(datain) {
 			var responer;
 			var jsondata = [];
 			
-			for ( var iterable_element in iterable) {
-				
-			}
-			
 			var customerDepositRec = nlapiCreateRecord('customerdeposit');
-
-			customerDepositRec.setFieldValue('customer', datain.customerId);//客户id，店铺id
+			//获取客户code，转成客户id
+//			var Csearch = nlapiSearchRecord('customer', null,
+//					[new nlobjSearchFilter('entityid', null, 'is',datain.customerCode)]);
+//			
+//			if (Csearch != null) {
+//				var customerId2 = Csearch[0].getId();
+//			}
+			customerDepositRec.setFieldValue('custbody_lijing_recordid', datain.orderId);//丽晶单据ID
+			customerDepositRec.setFieldValue('customer', datain.customerCode);//客户id，店铺id
 	//		customerDepositRec.setFieldValue('currency', datain.currency);//货币类型ID
 	//		customerDepositRec.setFieldValue('exchangerate', datain.exchangeRate);//汇率
 	//		customerDepositRec.setFieldValue('trandate', datain.date);//日期
@@ -39,47 +42,48 @@ function customerDeposit(datain) {
 				customerDepositRec.setFieldValue('memo', " ");
 			}
 			customerDepositRec.setFieldValue('custbody24', datain.vipId);//vip的ID
-	//		customerDepositRec.setFieldValue('paymentmethod', datain.paymentmethod);//付款方式
-			customerDepositRec.setFieldValue('custbody_top_up_number',
-					datain.topUpNumber);//充值单号
+//			customerDepositRec.setFieldValue('paymentmethod', datain.paymentmethod);//付款方式
+			customerDepositRec.setFieldValue('custbody_top_up_number',datain.topUpNumber);//充值单号
 
 			//给单据状态设置为deposited
 			
 			var internalId = nlapiSubmitRecord(customerDepositRec);
 			
-			var customerId = customerDepositRec.getFieldValue('customer');
+//			var customerId = customerDepositRec.getFieldValue('customer');
 	//		var currency = customerDepositRec.getFieldValue('currency');
 	//		var exchangeRate = customerDepositRec.getFieldValue('exchangerate');
 	//		var date = customerDepositRec.getFieldValue('trandate');
 			var payment = customerDepositRec.getFieldValue('payment');
 			var memo = customerDepositRec.getFieldValue('memo');
 			var vipId = customerDepositRec.getFieldValue('custbody24');
-	//		var paymentmethod = customerDepositRec.getFieldValue('paymentmethod');
-			var topUpNumber = customerDepositRec
-					.getFieldValue('custbody_top_up_number');
+//			var paymentmethod = customerDepositRec.getFieldValue('paymentmethod');
+			var topUpNumber = customerDepositRec.getFieldValue('custbody_top_up_number');
 
 			if (internalId) {
 				customerDeposit = {
-					"customerId" : customerId,
+					"customerId" : datain.customerCode,
 				  //"currency" : currency,
 			      //"exchangeRate" : exchangeRate,
 				  //"date" : date,
 					"payment" : payment,
 					"memo" : memo,
 					"vipId" : vipId,
-	//				"paymentmethod" : paymentmethod,
+//					"paymentmethod" : paymentmethod,
 					"topUpNumber" : topUpNumber
 				}
 				jsondata.push(customerDeposit);
 				responer = {
 					"status" : "success",
-					"message" : jsondata,
-					"internalId" : internalId
+					"message" : jsondata
 				}
 
 				writeLog('新建客户存款'+internalId,
-						'customer deposit is created', user, scriptId, 'OK',
-						JSON.stringify(datain), JSON.stringify(customerDeposit));
+						'customer deposit is created', 
+						user, 
+						scriptId, 
+						'OK',
+						JSON.stringify(datain), 
+						JSON.stringify(customerDeposit));
 
 				return JSON.stringify(responer);
 
@@ -87,12 +91,16 @@ function customerDeposit(datain) {
 		}
 	} catch (e) {
 		writeLog('新建客户存款',
-				'customer creation failed', user, scriptId, 'ERROR',
+				e.message, 
+				user, 
+				scriptId, 
+				'ERROR',
 				JSON.stringify(datain));
 
 		return {
 			"status" : "failure",
-			"message" : "创建客户存款失败!"
+			"message" : "储值失败!",
+			"reason" : e.message
 		};
 	}
 }

@@ -10,41 +10,47 @@
 	var context = nlapiGetContext();
 	var user = context.getName();
 	var scriptId = context.getScriptId();
-function createVIP(request,datain) {
+function createVIP(datain) {
 	
 //	var context = nlapiGetContext();
 //	var user = context.getName();
 //	var scriptId = context.getScriptId();
-	
+	nlapiLogExecution('error', 'datain', JSON.stringify(datain));
 		try {
 			// 当请求不为空时
 			if (datain != null && datain != " ") {
 				var vip;
 				var responer;
 				var jsondata = [];
+				
 				// 新建vip记录
 				var vipRec = nlapiCreateRecord('customrecord81');
 				// 给字段设置值
+//				var Csearch = nlapiSearchRecord('customer', null,
+//						[new nlobjSearchFilter('entityid', null, 'is',datain.customerCode)]);
+//				
+//				if (Csearch != null) {
+//					var customerId2 = Csearch[0].getId();
+//				}
 				vipRec.setFieldValue('altname', datain.vipName);//vip姓名
 				vipRec.setFieldValue('custrecord7', datain.vipGender);//vip性别
 				vipRec.setFieldValue('custrecord8', datain.vipPhone);//vip手机号
 				vipRec.setFieldValue('custrecordcust_age', datain.vipAge);//vip年龄
-				vipRec.setFieldValue('custrecordcust_card_number',
-						datain.vipCardNumber);//vip银行卡号
-				vipRec.setFieldValue('custrecordcust_store', datain.vipStore);//vip所属商铺id
-				vipRec.setFieldValue('custrecordcust_vip_level',
-						datain.vipLevel);//vip等级
+				vipRec.setFieldValue('custrecordcust_card_number',datain.vipCardNumber);//vip银行卡号
+				vipRec.setFieldValue('custrecordcust_store', datain.customerCode);//vip所属商铺id
+				vipRec.setFieldValue('custrecordcust_vip_level',datain.vipLevel);//vip等级
+				vipRec.setFieldValue('custrecord_birthday',datain.vipBirthday);//vip生日
 				// 提交记录到数据库，返回的是记录的id
 				var internalId = nlapiSubmitRecord(vipRec);
-
+				
 				var vipName = vipRec.getFieldValue('altname');
 				var vipGender = vipRec.getFieldValue('custrecord7');
 				var vipPhone = vipRec.getFieldValue('custrecord8');
 				var vipAge = vipRec.getFieldValue('custrecordcust_age');
-				var vipCardNumber = vipRec
-						.getFieldValue('custrecordcust_card_number');
+				var vipCardNumber = vipRec.getFieldValue('custrecordcust_card_number');
 				var vipStore = vipRec.getFieldValue('custrecordcust_store');
 				var vipLevel = vipRec.getFieldValue('custrecordcust_vip_level');
+				var vipBirthday = vipRec.getFieldValue('custrecord_birthday');
 				if (internalId) { //判断vip记录是否创建成功，并打印日志，返回信息
 					vip = {
 						"vipName" : vipName,
@@ -53,18 +59,23 @@ function createVIP(request,datain) {
 						"vipAge" : vipAge,
 						"vipCardNumber" : vipCardNumber,
 						"vipStore" : vipStore,
-						"vipLevel" : vipLevel
+						"vipLevel" : vipLevel,
+						"vipBirthday" : vipBirthday,
+						"internalId" : internalId
 					}
 					jsondata.push(vip);
 					var responer = {
 						"status" : "success",
-						"message" : jsondata,
-						"internalId" : internalId
+						"message" : jsondata
 					}
 
-					writeLog('新建vip' + '' + vipName, 'vip is created', user,
-							scriptId, 'OK', JSON.stringify(datain), JSON
-									.stringify(vip));
+					writeLog('新建vip' + '' + vipName, 
+							'vip is created', 
+							user,
+							scriptId, 
+							'OK', 
+							JSON.stringify(datain), 
+							JSON.stringify(vip));
 
 					return JSON.stringify(responer);
 
@@ -72,12 +83,17 @@ function createVIP(request,datain) {
 			}
 		} catch (e) {
 			
-			writeLog('新建vip' + '' + datain.vipName, 'vip creation failed', user,
-					scriptId, 'ERROR', JSON.stringify(datain));
+			writeLog('新建vip' + '' + datain.vipName, 
+					e.message, 
+					user,
+					scriptId, 
+					'ERROR', 
+					JSON.stringify(datain));
 
 			return {
 				"status" : "failure",
-				"message" : "创建vip失败!"
+				"message" : "创建vip失败!",
+				"reason" : e.message
 			};
 		}
 }
@@ -106,24 +122,31 @@ function updateVIP(datain) {
 				vipRec.setFieldValue('custrecordcust_card_number',
 						datain.vipCardNumber);
 			}
-			if (datain.vipStore) {
-				vipRec.setFieldValue('custrecordcust_store', datain.vipStore);
+			if (datain.customerCode) {
+//				var Csearch = nlapiSearchRecord('customer', null,
+//						[new nlobjSearchFilter('entityid', null, 'is',datain.customerCode)]);
+//				
+//				if (Csearch != null) {
+//					var customerId2 = Csearch[0].getId();
+//				}
+				vipRec.setFieldValue('custrecordcust_store', datain.customerCode);
 			}
 			if (datain.vipLevel) {
-				vipRec.setFieldValue('custrecordcust_vip_level',
-						datain.vipLevel);
+				vipRec.setFieldValue('custrecordcust_vip_level',datain.vipLevel);
 			}
-
+			if (datain.vipBirthday) {
+				vipRec.setFieldValue('custrecord_birthday',datain.vipBirthday);
+			}
 			var id = nlapiSubmitRecord(vipRec);
 
 			var vipName = vipRec.getFieldValue('altname');
 			var vipGender = vipRec.getFieldValue('custrecord7');
 			var vipPhone = vipRec.getFieldValue('custrecord8');
 			var vipAge = vipRec.getFieldValue('custrecordcust_age');
-			var vipCardNumber = vipRec
-					.getFieldValue('custrecordcust_card_number');
+			var vipCardNumber = vipRec.getFieldValue('custrecordcust_card_number');
 			var vipStore = vipRec.getFieldValue('custrecordcust_store');
 			var vipLevel = vipRec.getFieldValue('custrecordcust_vip_level');
+			var vipBirthday = vipRec.getFieldValue('custrecord_birthday');
 
 			if (id) {
 				vip = {
@@ -133,12 +156,17 @@ function updateVIP(datain) {
 					"vipAge" : vipAge,
 					"vipCardNumber" : vipCardNumber,
 					"vipStore" : vipStore,
-					"vipLevel" : vipLevel
+					"vipLevel" : vipLevel,
+					"vipBirthday" : vipBirthday
 				}
 
-				writeLog('更新vip' + '' + vipName, 'vip is created', user,
-						scriptId, 'OK', JSON.stringify(datain), JSON
-								.stringify(vip));
+				writeLog('更新vip' + '' + vipName, 
+						'vip is created', 
+						user,
+						scriptId, 
+						'OK', 
+						JSON.stringify(datain), 
+						JSON.stringify(vip));
 
 				return {
 					"status" : "success",
@@ -148,12 +176,17 @@ function updateVIP(datain) {
 		}
 	} catch (e) {
 		
-		writeLog('更新vip' + '' + datain.vipName, 'vip creation failed', user,
-				scriptId, 'ERROR', JSON.stringify(datain));
+		writeLog('更新vip' + '' + datain.vipName, 
+				e.message, 
+				user,
+				scriptId, 
+				'ERROR', 
+				JSON.stringify(datain));
 
 		return {
 			"status" : "failure",
-			"message" : "更新vip信息失败!"
+			"message" : "更新vip信息失败!",
+			"reason" : e.message
 		};
 	}
 }

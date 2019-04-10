@@ -21,8 +21,18 @@ function createCreditRefund(dataIn) {
 				//创建贷项通知单记录
 				var creditmemoRec = nlapiCreateRecord('creditmemo');
 				//获取请求的数据，并设置body上的字段值
-				creditmemoRec.setFieldValue('entity', dataIn.customerId);//客户ID
-				creditmemoRec.setFieldValue('location', dataIn.location);//地点ID
+				//获取客户code，转成客户id
+//				var Csearch = nlapiSearchRecord('customer', null,
+//						[new nlobjSearchFilter('entityid', null, 'is',dataIn.customerCode)]);
+//				
+//				if (Csearch != null) {
+//					var customerId2 = Csearch[0].getId();
+//				}
+				var customerRec = nlapiLoadRecord('customer', dataIn.customerCode);
+				var location2 = customerRec.getFieldValue('custentity_locationid');
+				creditmemoRec.setFieldValue('custbody_lijing_recordid', dataIn.orderId);//丽晶单据ID
+				creditmemoRec.setFieldValue('entity', dataIn.customerCode);//客户ID
+				creditmemoRec.setFieldValue('location', location2);//地点ID
 				creditmemoRec.setFieldValue('custbody10', dataIn.orderType);//订单类型ID
 				if (dataIn.memo) {
 					creditmemoRec.setFieldValue('memo', dataIn.memo);//备注，不是必填
@@ -30,7 +40,7 @@ function createCreditRefund(dataIn) {
 					creditmemoRec.setFieldValue('memo', " ");
 				}
 				//加载客户record获取免税代码
-				var customerRec = nlapiLoadRecord('customer', dataIn.customerId);
+				var customerRec = nlapiLoadRecord('customer',dataIn.customerCode);
 				var taxCode2 = customerRec.getFieldValue('taxitem');
 
 				//请求的数据是json数组，先转换成json对象，再遍历，取值（dataIn就是object类型，不需要用JSON.parse()进行转换）
@@ -43,19 +53,15 @@ function createCreditRefund(dataIn) {
 					var dataAmount = source[x].amount;
 
 					var search = nlapiSearchRecord('item', null,
-							[ new nlobjSearchFilter('itemid', null, 'is',
-									dataItemCode) ]);
+							[new nlobjSearchFilter('itemid', null, 'is',dataItemCode)]);
 					if (search != null) {
 						var itemId2 = search[0].getId();
 					}
 					nlapiLogExecution('error', 'itemId2', itemId2);
 	//				nlapiLogExecution('error', 'dataTaxcode', dataTaxcode);
-					creditmemoRec.setCurrentLineItemValue('item', 'item',
-							itemId2);//货品ID
-					creditmemoRec.setCurrentLineItemValue('item', 'taxcode',
-							taxCode2);//货品taxcode
-					creditmemoRec.setCurrentLineItemValue('item', 'amount',
-							dataAmount);//货品数量
+					creditmemoRec.setCurrentLineItemValue('item', 'item',itemId2);//货品ID
+					creditmemoRec.setCurrentLineItemValue('item', 'taxcode',taxCode2);//货品taxcode
+					creditmemoRec.setCurrentLineItemValue('item', 'quantity',dataAmount);//货品数量
 					//提交对明细行的操作的数据
 					creditmemoRec.commitLineItem('item');
 				}
@@ -64,36 +70,35 @@ function createCreditRefund(dataIn) {
 				var creditmemoId = nlapiSubmitRecord(creditmemoRec);
 				nlapiLogExecution('error', 'creditmemoId', creditmemoId);
 				//创建payment
-				var refundRec = nlapiCreateRecord('customerrefund', {
-					recordmode : 'dynamic'
-				});
-				refundRec.setFieldValue('customer', dataIn.customerId);//客户ID
-				refundRec.setFieldValue('paymentmethod', dataIn.paymentMethod);//付款方式ID
+//				var refundRec = nlapiCreateRecord('customerrefund', {recordmode : 'dynamic'});
+//				refundRec.setFieldValue('custbody_lijing_recordid', dataIn.orderId);//丽晶单据ID
+//				refundRec.setFieldValue('customer', dataIn.customerCode);//客户ID
+//				refundRec.setFieldValue('paymentmethod', dataIn.paymentMethod);//付款方式ID
 				/**
 				 * 创建客户退款单record，获取请求数据，并把值设置进sublist中
 				 * 创建贷项通知单没有问题，创建客户退款单的时候，输入客户和付款方式后，apply的sublist
 				 * 下面会有日记账，付款单，贷项通知单三个，遍历apply下的子项，将apply的值设置为T，即勾选上即可
 				 */
-				var line = refundRec.getLineItemCount('apply');
-				nlapiLogExecution('error', 'line', line);
-				for (var a = 1; a <= line; a++) {
-					//选择一行
-					refundRec.selectLineItem('apply', a);
-					//获取字段值，（apply的ID和type的ID也和creditmemoId相同）和ORIG.AMT.的值
-					var applyID = refundRec.getCurrentLineItemValue('apply','doc');
-					var amountRemaining = refundRec.getCurrentLineItemValue('apply', 'due');
-
-					if (applyID == creditmemoId) {
-						refundRec.setCurrentLineItemValue('apply', 'apply', 'T');
-						refundRec.setCurrentLineItemValue('apply', 'amount',amountRemaining);
-						refundRec.commitLineItem('apply');
-					}
-				}
-				var refundId = nlapiSubmitRecord(refundRec);
+//				var line = refundRec.getLineItemCount('apply');
+//				nlapiLogExecution('error', 'line', line);
+//				for (var a = 1; a <= line; a++) {
+//					//选择一行
+//					refundRec.selectLineItem('apply', a);
+//					//获取字段值，（apply的ID和type的ID也和creditmemoId相同）和ORIG.AMT.的值
+//					var applyID = refundRec.getCurrentLineItemValue('apply','doc');
+//					var amountRemaining = refundRec.getCurrentLineItemValue('apply', 'due');
+//
+//					if (applyID == creditmemoId) {
+//						refundRec.setCurrentLineItemValue('apply', 'apply', 'T');
+//						refundRec.setCurrentLineItemValue('apply', 'amount',amountRemaining);
+//						refundRec.commitLineItem('apply');
+//					}
+//				}
+//				var refundId = nlapiSubmitRecord(refundRec);
 
 				//获取设置的值，return回去
-				var paymentMethod = refundRec.getFieldValue('paymentmethod');
-				var customerId = creditmemoRec.getFieldValue('entity');
+//				var paymentMethod = refundRec.getFieldValue('paymentmethod');
+//				var customerId = creditmemoRec.getFieldValue('entity');
 				var location = creditmemoRec.getFieldValue('location');
 				var orderType = creditmemoRec.getFieldValue('custbody10');
 				var memo = creditmemoRec.getFieldValue('memo');
@@ -113,10 +118,10 @@ function createCreditRefund(dataIn) {
 				}
 
 				nlapiLogExecution('error', 'itemobj', itemobj);
-				if (creditmemoId && refundId) {
+				if (creditmemoId) {
 					data = {
-						"customerId" : customerId,
-						"paymentMethod" : paymentMethod,
+						"customerId" : dataIn.customerCode,
+//						"paymentMethod" : paymentMethod,
 						"location" : location,
 						"orderType" : orderType,
 						"memo" : memo,
@@ -125,15 +130,18 @@ function createCreditRefund(dataIn) {
 					Jsondata.push(data);
 					responer = {
 						"status" : "success",
-						"message" : data,
-						"creditmemoId" : creditmemoId,
-						"refundId" : refundId
+						"message" : data
+//						"creditmemoId" : creditmemoId,
+//						"refundId" : refundId
 					}
 					//写入日志，将关键信息写入丽晶接口日志record
-					writeLog('新建贷项通单'+creditmemoId+'客户退款单'+refundId,
-							'creditmemo and payment is created', user,
-							scriptId, 'OK', JSON.stringify(dataIn), JSON
-									.stringify(responer));
+					writeLog('新建贷项通单'+creditmemoId,
+							'creditmemo is created', 
+							user,
+							scriptId, 
+							'OK', 
+							JSON.stringify(dataIn), 
+							JSON.stringify(responer));
 
 					return JSON.stringify(responer);
 
@@ -141,13 +149,17 @@ function createCreditRefund(dataIn) {
 			}
 		} catch (e) {
 			
-			writeLog('新建贷项通知单和客户退款',
-					'creditMemo and customerRefund creation failed',
-					user, scriptId, 'ERROR', JSON.stringify(dataIn));
+			writeLog('新建贷项通知单',
+					e.message,
+					user, 
+					scriptId, 
+					'ERROR', 
+					JSON.stringify(dataIn));
 
 			return {
 				"status" : "failure",
-				"message" : "创建贷项通知单和客户退款失败!"
+				"message" : "退货失败!",
+				"reason" : e.message
 			};
 		}
 }
